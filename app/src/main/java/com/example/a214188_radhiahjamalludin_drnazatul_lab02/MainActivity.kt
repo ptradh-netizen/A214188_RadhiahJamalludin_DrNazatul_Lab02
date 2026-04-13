@@ -77,7 +77,7 @@ fun EduScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier.size(45.dp).clip(CircleShape).background(Color.LightGray),
                     contentScale = ContentScale.Crop
                 )
-                Text("Profile", color = Color.Black, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                Text("Radhiah", color = Color.Black, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
             }
         }
 
