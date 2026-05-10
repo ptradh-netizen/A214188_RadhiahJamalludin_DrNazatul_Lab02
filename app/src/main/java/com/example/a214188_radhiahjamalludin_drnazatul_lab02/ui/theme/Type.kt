@@ -1,4 +1,4 @@
-package com.example.a214188_radhiahjamalludin_drnazatul_lab03.ui.theme
+package com.example.a214188_radhiahjamalludin_drnazatul_lab02.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -6,13 +6,14 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.a214188_radhiahjamalludin_drnazatul_lab03.R
 
 val Montserrat = FontFamily(
-    Font(com.example.a214188_radhiahjamalludin_drnazatul_lab03.R.font.montserrat_variablefont_wght, FontWeight.Normal)
+    Font(R.font.montserrat_variablefont_wght, FontWeight.Normal)
 )
 
 val AbrilFatface = FontFamily(
-    Font(com.example.a214188_radhiahjamalludin_drnazatul_lab03.R.font.abrilfatface_regular, FontWeight.Normal)
+    Font(R.font.abrilfatface_regular, FontWeight.Normal)
 )
 
 // Set of Material typography styles to start with

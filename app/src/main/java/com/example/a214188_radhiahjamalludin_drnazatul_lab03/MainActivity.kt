@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.a214188_radhiahjamalludin_drnazatul_lab03.R
 import com.example.a214188_radhiahjamalludin_drnazatul_lab03.ui.theme.*
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            A214188_RadhiahJamalludin_DrNazatul_Lab03Theme(dynamicColor = false) {
+            A214188_RadhiahJamalludin_DrNazatul_Lab02Theme(dynamicColor = false) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     containerColor = MaterialTheme.colorScheme.background
@@ -193,7 +194,7 @@ fun EduScreen(modifier: Modifier = Modifier) {
                     text = resultText, 
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White // Found: java Putih Tajam
+                    color = Color.White
                 )
             }
         }
@@ -220,7 +221,7 @@ fun EduScreen(modifier: Modifier = Modifier) {
             fontSize = 16.sp,
             fontWeight = FontWeight.ExtraBold,
             modifier = Modifier.padding(start = 4.dp),
-            color = Color.White // Your Courses Putih Tajam
+            color = Color.White
         )
 
         // --- COURSE LIST ---
@@ -264,7 +265,7 @@ fun EduScreen(modifier: Modifier = Modifier) {
                                     text = course.name,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White // Nama Kursus Putih Tajam
+                                    color = Color.White
                                 )
                                 Text(
                                     text = "Level : ${course.level}",
@@ -286,7 +287,7 @@ fun EduScreen(modifier: Modifier = Modifier) {
                                 text = "Learn core concepts of ${course.name}.",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Normal,
-                                color = Color.White // Deskripsi Putih Tajam
+                                color = Color.White
                             )
                         }
                     }
@@ -300,7 +301,7 @@ fun EduScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White, // Footer Putih Tajam
+            color = Color.White,
             textAlign = TextAlign.Center
         )
     }
@@ -309,7 +310,7 @@ fun EduScreen(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    A214188_RadhiahJamalludin_DrNazatul_Lab03Theme(dynamicColor = false) {
+    A214188_RadhiahJamalludin_DrNazatul_Lab02Theme(dynamicColor = false) {
         EduScreen()
     }
 }

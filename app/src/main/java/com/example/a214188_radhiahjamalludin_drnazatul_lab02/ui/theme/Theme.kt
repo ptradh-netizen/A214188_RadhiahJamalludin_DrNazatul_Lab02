@@ -1,4 +1,4 @@
-package com.example.a214188_radhiahjamalludin_drnazatul_lab03.ui.theme
+package com.example.a214188_radhiahjamalludin_drnazatul_lab02.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

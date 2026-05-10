@@ -4,12 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,19 +22,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.a214188_radhiahjamalludin_drnazatul_lab02.ui.theme.A214188_RadhiahJamalludin_DrNazatul_Lab02Theme
+import androidx.compose.ui.unit.sp
+// Import R secara manual supaya tidak keliru dengan android.R atau lab03
+import com.example.a214188_radhiahjamalludin_drnazatul_lab03.R 
+import com.example.a214188_radhiahjamalludin_drnazatul_lab02.ui.theme.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            A214188_RadhiahJamalludin_DrNazatul_Lab02Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            A214188_RadhiahJamalludin_DrNazatul_Lab02Theme(dynamicColor = false) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = MaterialTheme.colorScheme.background
+                ) { innerPadding ->
                     EduScreen(Modifier.padding(innerPadding))
                 }
             }
@@ -39,19 +49,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Data class to keep code simple and organized
 data class CourseInfo(val name: String, val level: String, val icon: Int)
 
 @Composable
 fun EduScreen(modifier: Modifier = Modifier) {
     var searchText by remember { mutableStateOf("") }
-    var resultText by remember { mutableStateOf("Result text") }
+    var resultText by remember { mutableStateOf("Ready to search") }
+    var highlightedCourse by remember { mutableStateOf<String?>(null) }
 
-    // List of courses
     val courses = listOf(
-        CourseInfo("Java", "Beginning", R.drawable.java),
+        CourseInfo("Java Basic", "Beginning", R.drawable.java),
         CourseInfo("Mobile Development", "Intermediate", R.drawable.android),
-        CourseInfo("CyberSecurity Fundamentals", "Beginning", R.drawable.cyber2),
+        CourseInfo("Cybersecurity Fundamentals", "Beginning", R.drawable.cyber2),
         CourseInfo("AI & Machine Learning", "Advanced", R.drawable.ai),
         CourseInfo("Cisco/Networking", "Intermediate", R.drawable.network)
     )
@@ -59,81 +68,229 @@ fun EduScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFF0F4F8))
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        // --- HEADER ---
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
-                Text("Welcome,", color = Color.Black, style = MaterialTheme.typography.bodySmall)
-                Text("Smart Learning", color = Color.Black, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            }
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(
-                    painter = painterResource(id = R.drawable.radh),
-                    contentDescription = null,
-                    modifier = Modifier.size(45.dp).clip(CircleShape).background(Color.LightGray),
-                    contentScale = ContentScale.Crop
-                )
-                Text("Profile", color = Color.Black, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+        // --- GREETING CARD ---
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Welcome,",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Smart Learning",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(id = R.drawable.radh),
+                        contentDescription = "Profile",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primaryContainer),
+                        contentScale = ContentScale.Crop
+                    )
+                    Text(
+                        text = "Radhiah",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
             }
         }
 
-        // --- SEARCH SECTION ---
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text("Search Course", color = Color.Black, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                TextField(
-                    value = searchText,
-                    onValueChange = { searchText = it },
-                    modifier = Modifier.weight(1f).clip(RoundedCornerShape(8.dp)),
-                    placeholder = { Text("Search course...") }
+        // --- SEARCH FORM ---
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(1.dp)
+        ) {
+            Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    "Search Course", 
+                    style = MaterialTheme.typography.labelSmall, 
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
                 )
-                Spacer(Modifier.width(8.dp))
-                Button(
-                    onClick = { 
-                        if (searchText.isNotBlank()) {
-                            // Check if searchText exists in the course names
-                            val exists = courses.any { it.name.contains(searchText, ignoreCase = true) }
-                            resultText = if (exists) "Found: $searchText" else "No results found"
-                        } else {
-                            resultText = "Enter a name"
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(46.dp)
+                            .background(Color.White, RoundedCornerShape(12.dp))
+                            .padding(horizontal = 12.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (searchText.isEmpty()) {
+                            Text("Search course...", fontSize = 12.sp, color = Color.Gray)
                         }
-                    },
-                    shape = RoundedCornerShape(8.dp)
-                ) { Text("Search") }
+                        BasicTextField(
+                            value = searchText,
+                            onValueChange = { searchText = it },
+                            textStyle = TextStyle(
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            ),
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    
+                    Spacer(Modifier.width(8.dp))
+                    
+                    Button(
+                        onClick = {
+                            if (searchText.isNotBlank()) {
+                                val foundMatch = courses.any { it.name.contains(searchText, ignoreCase = true) }
+                                if (foundMatch) {
+                                    resultText = "Found: $searchText"
+                                    highlightedCourse = searchText
+                                } else {
+                                    resultText = "No results found"
+                                    highlightedCourse = null
+                                }
+                            } else {
+                                resultText = "Enter a name"
+                                highlightedCourse = null
+                            }
+                        },
+                        modifier = Modifier.height(46.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFADD8E6), 
+                            contentColor = Color.Black
+                        )
+                    ) {
+                        Text("Search", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+                Text(
+                    text = resultText, 
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
             }
-            Text(resultText, color = Color.Black, style = MaterialTheme.typography.labelMedium)
         }
 
         // --- PROMOTION CARD ---
-        Box(
-            modifier = Modifier.fillMaxWidth().height(80.dp).background(Color(0xFF0D47A1), RoundedCornerShape(12.dp)),
-            contentAlignment = Alignment.Center
+        Card(
+            modifier = Modifier.fillMaxWidth().height(55.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text("Let's learn something new!", color = Color.White, fontWeight = FontWeight.Medium)
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Let's learn something new!",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
 
-        // --- COURSES LIST ---
-        Text("Your Courses", color = Color.Black, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-        
-        courses.forEach { course ->
-            Row(
-                modifier = Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(10.dp)).padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(course.icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(35.dp).clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(Modifier.width(12.dp))
-                Column {
-                    Text(course.name, color = Color.Black, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-                    Text("Level: ${course.level}", color = Color.Black, style = MaterialTheme.typography.labelSmall)
+        // --- SECTION TITLE ---
+        Text(
+            text = "Your Courses",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.padding(start = 4.dp),
+            color = Color.White
+        )
+
+        // --- COURSE LIST ---
+        Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+            courses.forEach { course ->
+                var expanded by remember { mutableStateOf(false) }
+
+                val isHighlighted = highlightedCourse != null && course.name.contains(highlightedCourse!!, ignoreCase = true)
+                
+                val cardBgColor = if (isHighlighted) {
+                    SearchHighlightColor
+                } else {
+                    MaterialTheme.colorScheme.surface
+                }
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateContentSize()
+                        .clickable { expanded = !expanded },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = cardBgColor),
+                    elevation = CardDefaults.cardElevation(1.dp)
+                ) {
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Surface(
+                                modifier = Modifier.size(36.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                color = Color(0xFFFFF1F1)
+                            ) {
+                                Image(
+                                    painter = painterResource(course.icon),
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(5.dp)
+                                )
+                            }
+                            Spacer(Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = course.name,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "Level : ${course.level}",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.White
+                                )
+                            }
+                        }
+
+                        if (expanded) {
+                            Spacer(Modifier.height(6.dp))
+                            HorizontalDivider(
+                                thickness = 0.5.dp, 
+                                color = Color.White.copy(alpha = 0.3f)
+                            )
+                            Spacer(Modifier.height(6.dp))
+                            Text(
+                                text = "Learn core concepts of ${course.name}.",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -141,9 +298,10 @@ fun EduScreen(modifier: Modifier = Modifier) {
         // --- FOOTER ---
         Text(
             text = "Copyright @Smart Learning Corp",
-            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-            style = MaterialTheme.typography.labelSmall,
-            color = Color.Black,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
             textAlign = TextAlign.Center
         )
     }
@@ -152,5 +310,7 @@ fun EduScreen(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    A214188_RadhiahJamalludin_DrNazatul_Lab02Theme { EduScreen() }
+    A214188_RadhiahJamalludin_DrNazatul_Lab02Theme(dynamicColor = false) {
+        EduScreen()
+    }
 }
